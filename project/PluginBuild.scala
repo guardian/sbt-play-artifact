@@ -8,10 +8,10 @@ object PluginBuild extends Build {
   // they are dependencies of the plugin itself and not associated with the 
   // build definition as plugins usually are.
   
-  lazy val main = Project("sbt-frontend-build", file("."))
+  lazy val main = Project("sbt-play-artifact", file("."))
     .settings(ScalariformPlugin.defaultScalariformSettings: _*)
     .settings(
-      name := "sbt-frontend-build",
+      name := "sbt-play-artifact",
       organization := "com.gu",
       sbtPlugin := true,
       
