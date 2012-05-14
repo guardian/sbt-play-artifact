@@ -14,6 +14,8 @@ object PlayArtifact extends Plugin {
   val playArtifactFile = SettingKey[String]("play-artifact-file", "Filename of the artifact built by deployment-artifact")
 
   lazy val playArtifactCompileSettings = ScalariformPlugin.scalariformSettings ++ Seq(
+    scalaVersion := "2.9.1",
+
     maxErrors := 20,
     javacOptions := Seq("-g", "-source", "1.6", "-target", "1.6", "-encoding", "utf8"),
     scalacOptions := Seq("-unchecked", "-optimise", "-deprecation", "-Xcheckinit", "-encoding", "utf8"),
