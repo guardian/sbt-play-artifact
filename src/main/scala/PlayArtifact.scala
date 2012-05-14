@@ -1,12 +1,11 @@
-package com.gu
+package com.gu.deploy
 
 import com.typesafe.sbtscalariform.ScalariformPlugin
-import java.io.{File}
 import sbt._
+import sbt.Keys._
+import sbt.PlayProject._
 import sbtassembly.Plugin._
-import AssemblyKeys._
-import PlayProject._
-import Keys._
+import sbtassembly.Plugin.AssemblyKeys._
 
 object PlayArtifact extends Plugin {
 
@@ -14,38 +13,26 @@ object PlayArtifact extends Plugin {
   val playArtifactResources = TaskKey[Seq[(File, String)]]("play-artifact-resources", "Files that will be collected by the deployment-artifact task")
   val playArtifactFile = SettingKey[String]("play-artifact-file", "Filename of the artifact built by deployment-artifact")
 
-  lazy val playArtifactCompileSettings: Seq[Setting[_]] = ScalariformPlugin.scalariformSettings ++ Seq(
-    organization := "com.gu",
-    scalaVersion := "2.9.1",
-
+  lazy val playArtifactCompileSettings = ScalariformPlugin.scalariformSettings ++ Seq(
     maxErrors := 20,
     javacOptions := Seq("-g", "-source", "1.6", "-target", "1.6", "-encoding", "utf8"),
     scalacOptions := Seq("-unchecked", "-optimise", "-deprecation", "-Xcheckinit", "-encoding", "utf8"),
 
-    externalResolvers <<= resolvers map {
-      rs =>
-        Resolver.withDefaultResolvers(rs, scalaTools = false)
-    },
-
     ivyXML :=
       <dependencies>
-          <exclude org="commons-logging"/>
-        // conflicts with jcl-over-slf4j
-          <exclude org="org.springframework"/>
-        // because I don't like it
+        <exclude org="commons-logging"><!-- Conflicts with jcl-over-slf4j in Play. --></exclude>
+        <exclude org="org.springframework"><!-- Because I don't like it. --></exclude>
       </dependencies>
   )
 
-  lazy val playArtifactDistSettings: Seq[Setting[_]] = playArtifactCompileSettings ++ assemblySettings ++ Seq(
-    test in assembly := {},
-
+  lazy val playArtifactDistSettings = playArtifactCompileSettings ++ assemblySettings ++ Seq(
     mainClass in assembly := Some("play.core.server.NettyServer"),
 
     playArtifactResources <<= (assembly, name, baseDirectory) map {
       (assembly, name, baseDirectory) =>
         Seq(
-          (assembly, "packages/%s/%s".format(name, assembly.getName)),
-          (baseDirectory / "conf" / "deploy.json", "deploy.json")
+          assembly -> "packages/%s/%s".format(name, assembly.getName),
+          baseDirectory / "conf" / "deploy.json" -> "deploy.json"
         )
     },
 
@@ -54,14 +41,15 @@ object PlayArtifact extends Plugin {
     playArtifact <<= buildDeployArtifact,
     dist <<= buildDeployArtifact,
 
-    mergeStrategy in assembly <<= (mergeStrategy in assembly) {
-      current => {
+    mergeStrategy in assembly <<= (mergeStrategy in assembly) { current =>
+      {
         // Previous default MergeStrategy was first
 
         // Take ours, i.e. MergeStrategy.last...
         case "logger.xml" => MergeStrategy.last
         case "version.txt" => MergeStrategy.last
 
+        // Try to be helpful...
         case "overview.html" => MergeStrategy.first
         case "NOTICE" => MergeStrategy.first
         case "LICENSE" => MergeStrategy.first
@@ -71,37 +59,31 @@ object PlayArtifact extends Plugin {
       }
     },
 
-    excludedFiles in assembly := {
-      (bases: Seq[File]) =>
-        bases flatMap {
-          base =>
-            (base / "META-INF" * "*").get collect {
-              case f if f.getName.toLowerCase == "license" => f
-              case f if f.getName.toLowerCase == "manifest.mf" => f
-              case f if f.getName.endsWith(".SF") => f
-              case f if f.getName.endsWith(".DSA") => f
-              case f if f.getName.endsWith(".RSA") => f
-            }
-        }
+    excludedFiles in assembly := { (bases: Seq[File]) =>
+      bases flatMap { base => (base / "META-INF" * "*").get } collect {
+        case f if f.getName.toLowerCase == "license" => f
+        case f if f.getName.toLowerCase == "manifest.mf" => f
+        case f if f.getName.endsWith(".SF") => f
+        case f if f.getName.endsWith(".DSA") => f
+        case f if f.getName.endsWith(".RSA") => f
+      }
     }
   )
 
-  private def buildDeployArtifact =
-    (streams, assembly, target, playArtifactResources, playArtifactFile) map {
-      (s, assembly, target, resources, artifactFileName) => {
-        val distFile = target / artifactFileName
-        s.log.info("Disting " + distFile)
+  private def buildDeployArtifact = (streams, assembly, target, playArtifactResources, playArtifactFile) map {
+    (s, assembly, target, resources, artifactFileName) =>
+      val distFile = target / artifactFileName
+      s.log.info("Disting " + distFile)
 
-        if (distFile exists) {
-          distFile.delete
-        }
-        IO.zip(resources, distFile)
-
-        // Tells TeamCity to publish the artifact => leave this println in here
-        println("##teamcity[publishArtifacts '%s => .']" format distFile)
-
-        s.log.info("Done disting.")
-        assembly
+      if (distFile exists) {
+        distFile.delete
       }
-    }
+      IO.zip(resources, distFile)
+
+      // Tells TeamCity to publish the artifact => leave this println in here
+      println("##teamcity[publishArtifacts '%s => .']" format distFile)
+
+      s.log.info("Done disting.")
+      assembly
+  }
 }

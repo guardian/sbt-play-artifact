@@ -7,34 +7,26 @@ object PluginBuild extends Build {
   // Plugins included here are exported to projects that use this plugin because
   // they are dependencies of the plugin itself and not associated with the 
   // build definition as plugins usually are.
-  
+
+  lazy val artifactory = Resolver.url("sbt-plugin-releases",
+    new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
+
   lazy val main = Project("sbt-play-artifact", file("."))
-    .settings(ScalariformPlugin.defaultScalariformSettings: _*)
+    .settings(ScalariformPlugin.scalariformSettings: _*)
     .settings(
       name := "sbt-play-artifact",
       organization := "com.gu",
       sbtPlugin := true,
-      
-      resolvers += Resolver.url("sbt-plugin-releases", 
-          new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns),
 
       resolvers ++= Seq(
+        artifactory,
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
         "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
       ),
 
-      externalResolvers <<= resolvers map { rs =>
-        Resolver.withDefaultResolvers(rs, scalaTools = false)
-      },
-
-      libraryDependencies ++= Seq(
-        "commons-codec" % "commons-codec" % "1.6",
-        "commons-io" % "commons-io" % "2.2"
-      ),
-      
-      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.0"),
+      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.1"),
       addSbtPlugin("play" % "sbt-plugin" % "2.0.1"),
-      addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.3.1"),
+      addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.4.0"),
       addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.0.0"),
       addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0")
     )
