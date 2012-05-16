@@ -51,6 +51,9 @@ object PlayArtifact extends Plugin {
         case "logger.xml" => MergeStrategy.last
         case "version.txt" => MergeStrategy.last
 
+        // Merge play.plugins because we need them all
+        case "play.plugins" => MergeStrategy.filterDistinctLines
+
         // Try to be helpful...
         case "overview.html" => MergeStrategy.first
         case "NOTICE" => MergeStrategy.first
