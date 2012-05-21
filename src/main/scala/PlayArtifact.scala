@@ -13,6 +13,8 @@ object PlayArtifact extends Plugin {
   val playArtifactResources = TaskKey[Seq[(File, String)]]("play-artifact-resources", "Files that will be collected by the deployment-artifact task")
   val playArtifactFile = SettingKey[String]("play-artifact-file", "Filename of the artifact built by deployment-artifact")
 
+  val executableName = SettingKey[String]("executable-name", "Name of the executable jar file (without .jar)")
+
   lazy val playArtifactCompileSettings = ScalariformPlugin.scalariformSettings ++ Seq(
     scalaVersion := "2.9.1",
 
@@ -30,7 +32,7 @@ object PlayArtifact extends Plugin {
   lazy val playArtifactDistSettings = playArtifactCompileSettings ++ assemblySettings ++ Seq(
     mainClass in assembly := Some("play.core.server.NettyServer"),
 
-    playArtifactResources <<= (assembly, name, baseDirectory) map {
+    playArtifactResources <<= (assembly, executableName, baseDirectory) map {
       (assembly, name, baseDirectory) =>
         Seq(
           assembly -> "packages/%s/%s".format(name, assembly.getName),
@@ -39,7 +41,7 @@ object PlayArtifact extends Plugin {
     },
 
     playArtifactFile := "artifacts.zip",
-
+    executableName <<= name,
     playArtifact <<= buildDeployArtifact,
     dist <<= buildDeployArtifact,
 
