@@ -1,6 +1,5 @@
 package com.gu.deploy
 
-import com.typesafe.sbtscalariform.ScalariformPlugin
 import sbt._
 import sbt.Keys._
 import sbt.PlayProject._
@@ -15,21 +14,7 @@ object PlayArtifact extends Plugin {
 
   val executableName = SettingKey[String]("executable-name", "Name of the executable jar file (without .jar)")
 
-  lazy val playArtifactCompileSettings = ScalariformPlugin.scalariformSettings ++ Seq(
-    scalaVersion := "2.9.1",
-
-    maxErrors := 20,
-    javacOptions := Seq("-g", "-source", "1.6", "-target", "1.6", "-encoding", "utf8"),
-    scalacOptions := Seq("-unchecked", "-optimise", "-deprecation", "-Xcheckinit", "-encoding", "utf8"),
-
-    ivyXML :=
-      <dependencies>
-        <exclude org="commons-logging"><!-- Conflicts with jcl-over-slf4j in Play. --></exclude>
-        <exclude org="org.springframework"><!-- Because I don't like it. --></exclude>
-      </dependencies>
-  )
-
-  lazy val playArtifactDistSettings = playArtifactCompileSettings ++ assemblySettings ++ Seq(
+  lazy val playArtifactDistSettings = assemblySettings ++ Seq(
     mainClass in assembly := Some("play.core.server.NettyServer"),
 
     playArtifactResources <<= (assembly, executableName, baseDirectory) map {
