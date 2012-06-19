@@ -11,9 +11,6 @@ object PluginBuild extends Build {
   lazy val artifactory = Resolver.url("sbt-plugin-releases",
     url("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
 
-  lazy val playSnapshots = Resolver.url("Play 2.1-SNAPSHOT",
-    url("http://guardian.github.com/ivy/repo-snapshots"))(Resolver.ivyStylePatterns)
-
   lazy val main = Project("sbt-play-artifact", file("."))
     .settings(ScalariformPlugin.scalariformSettings: _*)
     .settings(
@@ -23,12 +20,11 @@ object PluginBuild extends Build {
 
       resolvers ++= Seq(
         artifactory,
-        playSnapshots,
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
 
       addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.1"),
-      addSbtPlugin("play" % "sbt-plugin" % "2.1-SNAPSHOT")
+      addSbtPlugin("play" % "sbt-plugin" % "2.1-06142012")
     )
     .dependsOn(uri("git://github.com/guardian/sbt-version-info-plugin.git#2.1"))
 }
