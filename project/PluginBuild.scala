@@ -24,7 +24,7 @@ object PluginBuild extends Build {
       ),
 
       addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.1"),
-      addSbtPlugin("play" % "sbt-plugin" % "2.1-06142012")
+      addSbtPlugin("play" % "sbt-plugin" % "2.0.3")
     )
     .dependsOn(uri("git://github.com/guardian/sbt-version-info-plugin.git#2.1"))
 }
