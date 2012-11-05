@@ -2,4 +2,5 @@
 .cache
 .classpath
 .project
+.history
 target/
