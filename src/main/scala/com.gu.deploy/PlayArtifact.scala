@@ -67,8 +67,8 @@ object PlayArtifact extends Plugin {
       val distFile = target / artifactFileName
       s.log.info("Disting " + distFile)
 
-      if (distFile exists) {
-        distFile.delete
+      if (distFile.exists()) {
+        distFile.delete()
       }
       IO.zip(resources, distFile)
 

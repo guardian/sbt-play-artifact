@@ -1,6 +1,5 @@
 import sbt._
 import Keys._
-import com.typesafe.sbtscalariform.ScalariformPlugin
 
 object PluginBuild extends Build {
   
@@ -8,23 +7,19 @@ object PluginBuild extends Build {
   // they are dependencies of the plugin itself and not associated with the 
   // build definition as plugins usually are.
 
-  lazy val artifactory = Resolver.url("sbt-plugin-releases",
-    url("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
-
   lazy val main = Project("sbt-play-artifact", file("."))
-    .settings(ScalariformPlugin.scalariformSettings: _*)
+    .settings(com.typesafe.sbtscalariform.ScalariformPlugin.scalariformSettings: _*)
     .settings(
       name := "sbt-play-artifact",
       organization := "com.gu",
       sbtPlugin := true,
 
       resolvers ++= Seq(
-        artifactory,
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
 
-      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.1"),
       addSbtPlugin("play" % "sbt-plugin" % "2.0.4")
     )
+    .dependsOn(uri("git://github.com/sbt/sbt-assembly.git#0.8.5"))
     .dependsOn(uri("git://github.com/guardian/sbt-version-info-plugin.git#2.4"))
 }
