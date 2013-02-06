@@ -1,7 +1,8 @@
 sbt-play-artifact
 =================
 
-SBT plugin to build a [magenta](https://github.com/guardian/deploy) deployable artifact from Play 2.0.
+SBT plugin to build a [magenta](https://github.com/guardian/deploy) deployable artifact from Play 2.1. Note
+that Play 2.0 has been dropped as of version 2.5 of this plugin.
 
 You might also be interested in the related [sbt-play-assethash](https://github.com/guardian/sbt-play-assethash)
 
@@ -39,9 +40,9 @@ compileSettings - the only time you might want to use only the latter is when ma
 
 Release
 -------
-To release a new version, tag it and push the tag to github.
+To release a new version, you can use the sbt-release command, which will test, tag, and update version numbers.
+It could publish artifacts too, once we're set up with the TypeSafe SBT Community Repository.
 
 ```
-git tag -a 1.XXX
-git push --tags
+sbt release
 ```
