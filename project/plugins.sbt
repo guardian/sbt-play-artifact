@@ -7,6 +7,6 @@ resolvers ++= Seq(
 // because by being in project/plugins.sbt they are associated instead with the
 // SBT project used to build the plugin and not with the plugin itself.
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.1.0")
+addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.2.0")
 
 addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.5.1")
