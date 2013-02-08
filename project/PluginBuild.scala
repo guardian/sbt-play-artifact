@@ -14,8 +14,8 @@ object PluginBuild extends Build {
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
 
-      addSbtPlugin("play" % "sbt-plugin" % "2.1.0")
+      addSbtPlugin("play" % "sbt-plugin" % "2.1.0"),
+      addSbtPlugin("com.gu" % "sbt-version-info-plugin" % "2.7")
     )
     .dependsOn(uri("git://github.com/sbt/sbt-assembly.git#0.8.5"))
-    .dependsOn(uri("git://github.com/guardian/sbt-version-info-plugin.git#2.4"))
 }
