@@ -10,10 +10,6 @@ object PluginBuild extends Build {
   lazy val main = Project("sbt-play-artifact", file("."))
     .settings(com.typesafe.sbtscalariform.ScalariformPlugin.scalariformSettings: _*)
     .settings(
-      name := "sbt-play-artifact",
-      organization := "com.gu",
-      sbtPlugin := true,
-
       resolvers ++= Seq(
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
