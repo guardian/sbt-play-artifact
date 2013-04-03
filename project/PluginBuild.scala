@@ -16,6 +16,7 @@ object PluginBuild extends Build {
 
       addSbtPlugin("play" % "sbt-plugin" % "2.1.0"),
       addSbtPlugin("com.gu" % "sbt-version-info-plugin" % "2.7")
+      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.7")
     )
-    .dependsOn(uri("git://github.com/sbt/sbt-assembly.git#0.8.7"))
+
 }
