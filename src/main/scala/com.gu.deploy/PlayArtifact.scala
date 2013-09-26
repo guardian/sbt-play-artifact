@@ -2,7 +2,7 @@ package com.gu.deploy
 
 import sbt._
 import sbt.Keys._
-import sbt.PlayProject._
+import play.Project._
 import sbtassembly.Plugin._
 import sbtassembly.Plugin.AssemblyKeys._
 

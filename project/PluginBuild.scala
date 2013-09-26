@@ -8,15 +8,15 @@ object PluginBuild extends Build {
   // build definition as plugins usually are.
 
   lazy val main = Project("sbt-play-artifact", file("."))
-    .settings(com.typesafe.sbtscalariform.ScalariformPlugin.scalariformSettings: _*)
+    .settings(com.typesafe.sbt.SbtScalariform.scalariformSettings: _*)
     .settings(
       resolvers ++= Seq(
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
 
-      addSbtPlugin("play" % "sbt-plugin" % "2.1.0"),
-      addSbtPlugin("com.gu" % "sbt-version-info-plugin" % "2.7"),
-      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.8.7")
+      addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.0"),
+      addSbtPlugin("com.gu" % "sbt-version-info-plugin" % "2.8"),
+      addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.9.2")
     )
 
 }
