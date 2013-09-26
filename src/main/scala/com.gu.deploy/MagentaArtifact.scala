@@ -2,22 +2,21 @@ package com.gu.deploy
 
 import sbt._
 import sbt.Keys._
-import sbt.PlayProject._
 import sbtassembly.Plugin._
 import sbtassembly.Plugin.AssemblyKeys._
 
-object PlayArtifact extends Plugin {
+object MagentaArtifact extends Plugin {
 
-  val playArtifact = TaskKey[File]("play-artifact", "Builds a deployable zip file for magenta")
-  val playArtifactResources = TaskKey[Seq[(File, String)]]("play-artifact-resources", "Files that will be collected by the deployment-artifact task")
-  val playArtifactFile = SettingKey[String]("play-artifact-file", "Filename of the artifact built by deployment-artifact")
+  val magenta = taskKey[File]("Builds a deployable zip file for magenta")
+  val magentaResources = taskKey[Seq[(File, String)]]("Files that will be collected by the deployment-artifact task")
+  val magentaFile = settingKey[String]("Filename of the artifact built by deployment-artifact")
 
-  val executableName = SettingKey[String]("executable-name", "Name of the executable jar file (without .jar)")
+  val executableName = settingKey[String]("Name of the executable jar file (without .jar)")
 
-  lazy val playArtifactDistSettings = assemblySettings ++ Seq(
+  lazy val magentaArtifactSettings = assemblySettings ++ Seq(
     mainClass in assembly := Some("play.core.server.NettyServer"),
 
-    playArtifactResources <<= (assembly, executableName, baseDirectory) map {
+    magentaResources <<= (assembly, executableName, baseDirectory) map {
       (assembly, name, baseDirectory) =>
         Seq(
           assembly -> "packages/%s/%s".format(name, assembly.getName),
@@ -25,10 +24,9 @@ object PlayArtifact extends Plugin {
         )
     },
 
-    playArtifactFile := "artifacts.zip",
+    magentaFile := "artifacts.zip",
     executableName <<= name,
-    playArtifact <<= buildDeployArtifact,
-    dist <<= buildDeployArtifact,
+    magenta <<= buildDeployArtifact,
 
     mergeStrategy in assembly <<= (mergeStrategy in assembly) { current =>
       {
@@ -62,7 +60,7 @@ object PlayArtifact extends Plugin {
     }
   )
 
-  private def buildDeployArtifact = (streams, assembly, target, playArtifactResources, playArtifactFile) map {
+  private def buildDeployArtifact = (streams, assembly, target, magentaResources, magentaFile) map {
     (s, assembly, target, resources, artifactFileName) =>
       val distFile = target / artifactFileName
       s.log.info("Disting " + distFile)
