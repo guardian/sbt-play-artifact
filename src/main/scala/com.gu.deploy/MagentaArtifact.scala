@@ -19,7 +19,7 @@ object MagentaArtifact extends Plugin {
     magentaResources <<= (assembly, executableName, baseDirectory) map {
       (assembly, name, baseDirectory) =>
         Seq(
-          assembly -> "packages/%s/%s".format(name, assembly.getName),
+          assembly -> "packages/%s/%s.jar".format(name, name),
           baseDirectory / "conf" / "deploy.json" -> "deploy.json"
         )
     },
