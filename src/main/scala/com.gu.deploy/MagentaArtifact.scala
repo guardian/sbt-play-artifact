@@ -30,7 +30,8 @@ object MagentaArtifact extends Plugin {
 
     mergeStrategy in assembly <<= (mergeStrategy in assembly) { current =>
       {
-        // Previous default MergeStrategy was first
+        // seems to collide between sbt and play
+        case "play/core/server/ServerWithStop.class" => MergeStrategy.first
 
         // Take ours, i.e. MergeStrategy.last...
         case "logger.xml" => MergeStrategy.last
@@ -47,6 +48,10 @@ object MagentaArtifact extends Plugin {
 
         case other => current(other)
       }
+    },
+
+    excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
+      cp filter {jar => "commons-logging-1.1.1.jar" == jar.data.getName}
     },
 
     excludedFiles in assembly := { (bases: Seq[File]) =>
