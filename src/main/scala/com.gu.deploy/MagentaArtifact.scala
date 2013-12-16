@@ -44,7 +44,6 @@ object MagentaArtifact extends Plugin {
         case "overview.html" => MergeStrategy.first
         case "NOTICE" => MergeStrategy.first
         case "LICENSE" => MergeStrategy.first
-        case meta if meta.startsWith("META-INF/") => MergeStrategy.first
 
         case other => current(other)
       }
