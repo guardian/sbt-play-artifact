@@ -45,22 +45,21 @@ object MagentaArtifact extends Plugin {
         case "NOTICE" => MergeStrategy.first
         case "LICENSE" => MergeStrategy.first
 
+        case meta@PathList("META-INF", xs @ _*) =>
+          (xs map {_.toLowerCase}) match {
+            case ("manifest.mf" :: Nil) | ("license" :: Nil) =>
+              MergeStrategy.discard
+            case ps @ (x :: xs) if ps.last.endsWith(".rsa") =>
+              MergeStrategy.discard
+            case _ => current(meta)
+          }
+
         case other => current(other)
       }
     },
 
     excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
       cp filter {jar => "commons-logging-1.1.1.jar" == jar.data.getName}
-    },
-
-    excludedFiles in assembly := { (bases: Seq[File]) =>
-      bases flatMap { base => (base / "META-INF" * "*").get } collect {
-        case f if f.getName.toLowerCase == "license" => f
-        case f if f.getName.toLowerCase == "manifest.mf" => f
-        case f if f.getName.endsWith(".SF") => f
-        case f if f.getName.endsWith(".DSA") => f
-        case f if f.getName.endsWith(".RSA") => f
-      }
     }
   )
 
