@@ -51,6 +51,8 @@ object MagentaArtifact extends Plugin {
               MergeStrategy.discard
             case ps @ (x :: xs) if ps.last.endsWith(".rsa") =>
               MergeStrategy.discard
+            case ("log4j-provider.properties" :: Nil) =>
+              MergeStrategy.first
             case _ => current(meta)
           }
 
